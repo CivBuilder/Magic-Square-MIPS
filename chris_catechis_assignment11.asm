@@ -18,27 +18,64 @@
 	C = 74
 	previousRandomNumber: .word  1
 
+#;labels
+    squareSizeOutput: .asciiz "Magic Square Size (2-10): "
+	sizeErrorOutput: .asciiz "Size must be between 2 and 10."
+    magicNumberOutput: .asciiz "Magic Number: "
+    numberErrorOutput: .asciiz "Magic number must be between the square size and 1000."
+
 #;	Magic Square
 	MINIMUM_SIZE = 2
 	MAXIMUM_SIZE = 10
 	MAXIMUM_TOTAL = 1000
 	magicSquare: .space MAXIMUM_SIZE*MAXIMUM_SIZE*4 
 
+#; Additional variables
+	sizeInput: .space 4
+
 .text
 .globl main
 .ent main
 main:
 	#; Ask user for size of magic square to generate
+	li $v0, SYSTEM_PRINT_STRING  # prompt user
+    la $a0, squareSizeOutput
+    syscall
+
+	li $v0, SYSTEM_READ_INTEGER  # input
+	la $a0, sizeInput
+	syscall
 	#;	Check that the size is between 2 and 10
+	sizeCheck:
+		li $t0, 2
+		li $t1, 10
+		lw $t2, sizeInput
+
+		blt $t2, $t0, sizeErrorPrompt
+		bgt $t2, $t1, sizeErrorOutput
+
+		j sumInput
 	#;	Output an error and ask again if not within bounds
+	sizeErrorPrompt:
+		li $v0, SYSTEM_PRINT_STRING  # prompt user
+		la $a0, squareSizeOutput
+		syscall
+
+		li $v0, SYSTEM_READ_INTEGER  # input
+		la $a0, sizeInput
+		syscall
+
+		j sizeCheck  # recheck size of input
 	
-	#; Ask user for column/row total
-	#;	Check that the total is between the square size and 1000
-	#;	Output an error and ask again if not within bounds
+	sumInput:
+		#; Ask user for column/row total
 		
-	#; Create a magic square
-	
-	#; Print the magic square
+		#;	Check that the total is between the square size and 1000
+		#;	Output an error and ask again if not within bounds
+			
+		#; Create a magic square
+		
+		#; Print the magic square
 
 	endProgram:
 	li $v0, SYSTEM_EXIT
